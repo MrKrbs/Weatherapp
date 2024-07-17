@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App UI</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="weather-app">
+        <header class="header">
+            <h1 id="location">Kampi Ya Moto</h1>
+            <div class="icons">
+                <span class="icon">+</span>
+                <span class="icon">⋮</span>
+            </div>
+        </header>
+        <div class="search">
+            <input type="text" id="city-input" placeholder="Enter city name" spellcheck="false">
+            <button onclick="searchWeather()"><img src="/images/search.png" alt="Search"></button>
+        </div>
+        <section class="forecast">
+            <div class="forecast-title">24-hour forecast</div>
+            <div class="hourly-forecast">
+                <div class="forecast-hour">
+                    <div class="temp" id="temperature">27°</div>
+                    <div class="icon sunny"></div>
+                    <div class="wind">Force 3</div>   
+                </div>
+                <!-- Repeat for other hours -->
+            </div>
+        </section>
+        <section class="details">
+            <div class="detail-item uv-index">
+                <div class="label">UV</div>
+                <div class="value" id="uv-index">Moderate</div>
+                <div class="uv-level">4</div>
+            </div>
+            <div class="detail-item humidity">
+                <div class="label">Humidity</div>
+                <div class="value" id="humidity">43%</div>
+            </div>
+            <div class="detail-item real-feel">
+                <div class="label">Real feel</div>
+                <div class="value" id="real-feel">28°</div>
+            </div>
+            <div class="detail-item wind">
+                <div class="label">Wind</div>
+                <div class="value" id="wind">Force 3</div>
+            </div>
+            <div class="detail-item sunset">
+                <div class="label">Sunset</div>
+                <div class="value" id="sunset">18:39</div>
+            </div>
+            <div class="detail-item pressure">
+                <div class="label">Pressure</div>
+                <div class="value" id="pressure">1016 hPa</div>
+            </div>
+        </section>
+        <footer class="footer">
+            <div class="data-provider">Data provided in part by OpenWeatherMap</div>
+        </footer>
+    </div>
+
+    <script>
+        const apiKey = '71175ad6602c867447e788bdb5a45c33';
+        const apiUrl = 'https://api.openweathermap.org/data/2.5/weather?units=metric';
+        
+        // Function to fetch weather data
+        async function fetchWeather(url) {
+          try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Failed to fetch weather data');
+            const data = await response.json();
+            updateWeatherUI(data);
+          } catch (error) {
+            console.error('Error fetching weather data:', error);
+            alert('Failed to fetch weather data. Please try again later.');
+          }
+        }
+        
+        // Function to get weather data by coordinates
+        function getWeatherData(lat, lon) {
+          const url = `${apiUrl}&lat=${lat}&lon=${lon}&appid=${apiKey}`;
+          fetchWeather(url);
+        }
+        
+        // Function to get weather data by city name
+        function searchWeather() {
+          const city = document.getElementById('city-input').value;
+          if (city) {
+            const url = `${apiUrl}&q=${city}&appid=${apiKey}`;
+            fetchWeather(url);
+          } else {
+            alert('Please enter a city name.');
+          }
+        }
+        
+        // Function to update UI with weather data
+        function updateWeatherUI(data) {
+          const locationElement = document.getElementById('location');
+          const temperatureElement = document.getElementById('temperature');
+          const uvIndexElement = document.getElementById('uv-index');
+          const humidityElement = document.getElementById('humidity');
+          const realFeelElement = document.getElementById('real-feel');
+          const windElement = document.getElementById('wind');
+          const sunsetElement = document.getElementById('sunset');
+          const pressureElement = document.getElementById('pressure');
+        
+          // Update elements with weather data
+          locationElement.textContent = data.name || 'Unknown location';
+          temperatureElement.textContent = `${data.main.temp}°C`;
+          uvIndexElement.textContent = data.weather[0].main;
+          humidityElement.textContent = `${data.main.humidity}%`;
+          realFeelElement.textContent = `${data.main.feels_like}°C`;
+          windElement.textContent = `${data.wind.speed} m/s`;
+          sunsetElement.textContent = new Date(data.sys.sunset * 1000).toLocaleTimeString();
+          pressureElement.textContent = `${data.main.pressure} hPa`;
+        
+          // Determine background based on weather conditions
+          const weatherCondition = data.weather[0].main.toLowerCase();
+          const currentTime = new Date().getHours();
+          const isNightTime = currentTime >= 18 || currentTime < 6;
+        
+          let backgroundImage = 'default-background.jpg'; // Default background
+        
+          if (isNightTime) {
+            backgroundImage = 'night-sky.jpg';
+          } else if (weatherCondition.includes('rain')) {
+            backgroundImage = 'night-sky.jpg';
+          } else if (weatherCondition.includes('clear')) {
+            backgroundImage = 'night-sky.jpg';
+          } else if (weatherCondition.includes('cloud')) {
+            backgroundImage = 'night-sky.jpg';
+          }
+        
+          // Update background
+          document.body.style.background = `url("${backgroundImage}") no-repeat center center fixed`;
+          document.body.style.backgroundSize = 'cover';
+        }
+        
+        // Get user's current position
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            const { latitude, longitude } = position.coords;
+            getWeatherData(latitude, longitude);
+          },
+          error => {
+            console.error('Error getting location:', error);
+            // Fallback to a default location
+            getWeatherData(-1.2921, 36.8219); // Example coordinates for a default location
+          }
+        );
+        
+        // Add event listener for Enter key press on the input field
+        document.getElementById('city-input').addEventListener('keydown', event => {
+          if (event.key === 'Enter') {
+            searchWeather();
+          }
+        });
+        </script>
+        
+</body>
+</html>
