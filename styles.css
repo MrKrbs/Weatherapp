@@ -60,6 +60,19 @@ body {
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
+.weather-icon {
+    width: 100px; /* Adjust size as needed */
+    height: 100px; /* Adjust size as needed */
+    background-size: cover;
+    background-position: center;
+    margin: 20px auto;
+  }
+  /* Weather icon styles */
+.weather-app .icon {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
 
 .header {
     background: linear-gradient(135deg, #4facfe, #3d6e70);

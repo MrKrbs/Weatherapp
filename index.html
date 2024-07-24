@@ -114,7 +114,6 @@
     position: absolute;
     bottom: 5px;
     left: 50%;
-
   }
   .range-bar-fill {
     height: 100%;
@@ -140,6 +139,13 @@
     margin-top: 20px;
     display: inline-block;
   }
+  .weather-icon {
+    width: 100px; /* Adjust size as needed */
+    height: 100px; /* Adjust size as needed */
+    background-size: cover;
+    background-position: center;
+    margin: 20px auto;
+  }
 </style>
 </head>
 <body>
@@ -152,6 +158,7 @@
       <div class="location" id="location">Loading...</div>
       <div class="temperature" id="temperature">--°</div>
       <div class="condition" id="condition">Fetching data...</div>
+      <div id="weather-icon" class="weather-icon"></div> 
     </div>
     <div class="weather-app">
       <div class="forecast">
@@ -182,7 +189,7 @@
       </div>
       <button class="forecast-button" onclick="getWeatherData()">5-day forecast</button>
     </div>
-    <a href="weatherui2.html">Go to Weather UI 2</a>
+    <a href="weatherui2.html">>></a>
   </div>
 
   <!-- Include JavaScript -->
@@ -224,6 +231,7 @@
       const locationElement = document.getElementById('location');
       const temperatureElement = document.getElementById('temperature');
       const conditionElement = document.getElementById('condition');
+      const weatherIcon = document.getElementById('weather-icon');
       const todayBar = document.getElementById('today-bar');
       const tomorrowBar = document.getElementById('tomorrow-bar');
       const friBar = document.getElementById('fri-bar');
@@ -241,7 +249,21 @@
       tomorrowBar.style.width = '80%'; // Placeholder values
       friBar.style.width = '60%'; // Placeholder values
 
-      
+      // Determine the weather icon based on temperature and condition
+      let weatherImage = '';
+
+      if (currentTemp === 20 && currentCondition.includes('clear')) {
+        weatherImage = 'images/clear.png'; // Update this path to your icon
+      } else if (currentCondition.includes('cloud')) {
+        weatherImage = 'images/clouds.png'; // Update this path to your icon
+      } else if (currentCondition.includes('rain')) {
+        weatherImage = 'images/rain.png'; // Update this path to your icon
+      } else {
+        weatherImage = 'images/default-icon.png'; // Default icon
+      }
+
+      // Update weather icon
+      weatherIcon.style.backgroundImage = `url("${weatherImage}")`;
     }
 
     // Fetch initial data for a default location

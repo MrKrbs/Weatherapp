@@ -11,7 +11,7 @@
         <header class="header">
             <h1 id="location">Kampi Ya Moto</h1>
             <div class="icons">
-                <span class="icon">+</span>
+                <span id="weather-icon" class="icon"></span>
                 <span class="icon">⋮</span>
             </div>
         </header>
@@ -106,6 +106,7 @@
           const windElement = document.getElementById('wind');
           const sunsetElement = document.getElementById('sunset');
           const pressureElement = document.getElementById('pressure');
+          const weatherIcon = document.getElementById('weather-icon');
         
           // Update elements with weather data
           locationElement.textContent = data.name || 'Unknown location';
@@ -117,26 +118,26 @@
           sunsetElement.textContent = new Date(data.sys.sunset * 1000).toLocaleTimeString();
           pressureElement.textContent = `${data.main.pressure} hPa`;
         
-          // Determine background based on weather conditions
+          // Determine weather icon based on weather conditions
           const weatherCondition = data.weather[0].main.toLowerCase();
-          const currentTime = new Date().getHours();
-          const isNightTime = currentTime >= 18 || currentTime < 6;
         
-          let backgroundImage = 'default-background.jpg'; // Default background
+          let weatherImage = '';
         
-          if (isNightTime) {
-            backgroundImage = 'night-sky.jpg';
-          } else if (weatherCondition.includes('rain')) {
-            backgroundImage = 'night-sky.jpg';
-          } else if (weatherCondition.includes('clear')) {
-            backgroundImage = 'night-sky.jpg';
+          if (weatherCondition.includes('clear')) {
+            weatherImage = 'images/clear.png'; // Update path to your icon
           } else if (weatherCondition.includes('cloud')) {
-            backgroundImage = 'night-sky.jpg';
+            weatherImage = 'images/clouds.png'; // Update path to your icon
+          } else if (weatherCondition.includes('rain')) {
+            weatherImage = 'images/rain.png'; // Update path to your icon
+          } else {
+            weatherImage = 'images/default.png'; // Default icon
           }
         
-          // Update background
-          document.body.style.background = `url("${backgroundImage}") no-repeat center center fixed`;
-          document.body.style.backgroundSize = 'cover';
+          // Update weather icon
+          weatherIcon.style.backgroundImage = `url("${weatherImage}")`;
+          weatherIcon.style.backgroundSize = 'contain';
+          weatherIcon.style.backgroundRepeat = 'no-repeat';
+          weatherIcon.style.backgroundPosition = 'center';
         }
         
         // Get user's current position
@@ -158,7 +159,6 @@
             searchWeather();
           }
         });
-        </script>
-        
+    </script>
 </body>
 </html>
